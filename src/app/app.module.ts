@@ -1,4 +1,3 @@
-import { WindowRefService } from './services/window-ref.service';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,7 +14,7 @@ import { EngineComponent } from './engine/engine.component';
     FormsModule
   ],
   providers: [
-    WindowRefService
+
   ],
   bootstrap: [
     AppComponent

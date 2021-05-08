@@ -1,4 +1,4 @@
-import { WindowRefService } from './../services/window-ref.service';
+
 import {ElementRef, Injectable, NgZone} from '@angular/core';
 import {
   Engine,
@@ -28,8 +28,7 @@ export class EngineService {
   private sphere: Mesh;
 
   public constructor(
-    private ngZone: NgZone,
-    private windowRef: WindowRefService
+    private ngZone: NgZone
   ) {}
 
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
@@ -42,7 +41,7 @@ export class EngineService {
     this.scene = new Scene(this.engine);
     this.scene.clearColor = new Color4(0, 0, 0, 0);
 
-    this.camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new Vector3(0, 0, 0), this.scene);
+    this.camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new Vector3(10, 0, 20), this.scene);
 
     // target the camera to scene origin
     this.camera.setTarget(Vector3.Zero());
@@ -62,7 +61,7 @@ export class EngineService {
     this.sphere.material = spherMaterial;
 
     // move the sphere upward 1/2 of its height
-    this.sphere.position.y = 1;
+    this.sphere.position.z = 0;
 
     // simple rotation along the y axis
     this.scene.registerAfterRender(() => {
@@ -78,22 +77,20 @@ export class EngineService {
   }
 
   public animate(): void {
-    // We have to run this outside angular zones,
-    // because it could trigger heavy changeDetection cycles.
     this.ngZone.runOutsideAngular(() => {
       const rendererLoopCallback = () => {
         this.scene.render();
       };
 
-      if (this.windowRef.document.readyState !== 'loading') {
+      if (window.document.readyState !== 'loading') {
         this.engine.runRenderLoop(rendererLoopCallback);
       } else {
-        this.windowRef.window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           this.engine.runRenderLoop(rendererLoopCallback);
         });
       }
 
-      this.windowRef.window.addEventListener('resize', () => {
+      window.addEventListener('resize', () => {
         this.engine.resize();
       });
     });
