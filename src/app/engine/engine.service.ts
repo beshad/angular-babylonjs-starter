@@ -14,7 +14,8 @@ import {
   StandardMaterial,
   Texture,
   DynamicTexture,
-  Space
+  Space,
+  MeshBuilder
 } from '@babylonjs/core';
 
 @Injectable({ providedIn: 'root' })
@@ -25,7 +26,7 @@ export class EngineService {
   private scene: Scene;
   private light: Light;
 
-  private sphere: Mesh;
+  private item: Mesh;
 
   public constructor(
     private ngZone: NgZone
@@ -39,7 +40,7 @@ export class EngineService {
 
     // create a basic BJS Scene object
     this.scene = new Scene(this.engine);
-    this.scene.clearColor = new Color4(0, 0, 0, 0);
+    // this.scene.clearColor = new Color4(0, 0, 0, 0);
 
     this.camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new Vector3(10, 0, 20), this.scene);
 
@@ -52,20 +53,22 @@ export class EngineService {
     // create a basic light, aiming 0,1,0 - meaning, to the sky
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
 
-    // create a built-in "sphere" shape; its constructor takes 4 params: name, subdivisions, radius, scene
-    this.sphere = Mesh.CreateSphere('sphere', 16, 2, this.scene);
+    const ground = MeshBuilder.CreateGround("ground", {width:10, height:10});
 
-    // create the material with its texture for the sphere and assign it to the sphere
+    // create a built-in "item" shape; its constructor takes 4 params: name, subdivisions, radius, scene
+    // this.item= Mesh.Createitem('item', 16, 2, this.scene);
+    this.item = MeshBuilder.CreateBox("box", {});
+    // create the material with its texture for the item and assign it to the item
     const spherMaterial = new StandardMaterial('sun_surface', this.scene);
     spherMaterial.diffuseTexture = new Texture('assets/textures/sun.jpg', this.scene);
-    this.sphere.material = spherMaterial;
+    this.item.material = spherMaterial;
 
-    // move the sphere upward 1/2 of its height
-    this.sphere.position.z = 0;
+    // move the item upward 1/2 of its height
+    this.item.position.y = 0.5;
 
     // simple rotation along the y axis
     this.scene.registerAfterRender(() => {
-      this.sphere.rotate (
+      this.item.rotate (
         new Vector3(0, 1, 0),
         0.02,
         Space.LOCAL
